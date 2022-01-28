@@ -2,11 +2,7 @@
 package cz.habarta.typescript.generator;
 
 import cz.habarta.typescript.generator.compiler.ModelCompiler;
-import cz.habarta.typescript.generator.emitter.Emitter;
-import cz.habarta.typescript.generator.emitter.InfoJsonEmitter;
-import cz.habarta.typescript.generator.emitter.NpmPackageJson;
-import cz.habarta.typescript.generator.emitter.NpmPackageJsonEmitter;
-import cz.habarta.typescript.generator.emitter.TsModel;
+import cz.habarta.typescript.generator.emitter.*;
 import cz.habarta.typescript.generator.parser.GsonParser;
 import cz.habarta.typescript.generator.parser.Jackson1Parser;
 import cz.habarta.typescript.generator.parser.Jackson2Parser;
@@ -88,7 +84,9 @@ public class TypeScriptGenerator {
     }
 
     private void generateTypeScript(TsModel tsModel, Output output, boolean forceExportKeyword, int initialIndentationLevel) {
-        getEmitter().emit(tsModel, output.getWriter(), output.getName(), output.shouldCloseWriter(), forceExportKeyword, initialIndentationLevel);
+        Emitter currentEmitter = getEmitter();
+        currentEmitter.setOutput(output);
+        currentEmitter.emit(tsModel, output.getWriter(), output.getName(), output.shouldCloseWriter(), forceExportKeyword, initialIndentationLevel);
     }
 
     private void generateInfoJson(TsModel tsModel, Output output) {
@@ -218,7 +216,11 @@ public class TypeScriptGenerator {
 
     public Emitter getEmitter() {
         if (emitter == null) {
-            emitter = new Emitter(settings);
+            if (settings.outputMultipleFiles) {
+                emitter = new DirectoryEmitter(settings);
+            } else {
+                emitter = new Emitter(settings);
+            }
         }
         return emitter;
     }

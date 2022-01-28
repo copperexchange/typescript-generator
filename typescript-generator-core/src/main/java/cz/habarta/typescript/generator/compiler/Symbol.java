@@ -57,4 +57,9 @@ public class Symbol {
         simpleName = simpleName + suffix;
     }
 
+    @Override
+    public String toString() {
+        return getFullName();
+    }
+
 }

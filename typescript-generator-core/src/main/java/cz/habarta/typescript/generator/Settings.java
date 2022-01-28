@@ -48,6 +48,7 @@ public class Settings {
     public String quotes = "\"";
     public String indentString = "    ";
     public TypeScriptFileType outputFileType = TypeScriptFileType.declarationFile;
+    public boolean outputMultipleFiles = false;
     public TypeScriptOutputKind outputKind = null;
     public String module = null;
     public String namespace = null;
@@ -291,7 +292,7 @@ public class Settings {
         }
         return result;
     }
-    
+
     public void validate() {
         if (classLoader == null) {
             classLoader = Thread.currentThread().getContextClassLoader();

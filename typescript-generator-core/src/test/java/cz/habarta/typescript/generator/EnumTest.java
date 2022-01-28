@@ -105,14 +105,14 @@ public class EnumTest {
         settings.mapEnum = EnumMapping.asEnum;
         settings.jsonLibrary = JsonLibrary.jackson2;
         final ClassEnumExtension classEnumExtension = new ClassEnumExtension();
-        classEnumExtension.setConfiguration(Collections.singletonMap("classEnumPattern", "Enum"));
+        classEnumExtension.setConfiguration(Collections.singletonMap("classEnumPattern", "TestAnnotation"));
         settings.extensions.add(classEnumExtension);
         final String output = new TypeScriptGenerator(settings).generateTypeScript(Input.from(DummyEnum.class, DummyClassEnum.class));
         final String expected = (
                 "\ndeclare const enum DummyClassEnum {\n" +
-                        "    ATYPE = 'ATYPE',\n" +
-                        "    BTYPE = 'BTYPE',\n" +
-                        "    CTYPE = 'CTYPE',\n" +
+                        "    ATYPE = 'a-type',\n" +
+                        "    BTYPE = 'b-type',\n" +
+                        "    CTYPE = 'c-type',\n" +
                         "}\n" +
                 "\ndeclare const enum DummyEnum {\n" +
                         "    Red = 'Red',\n" +
@@ -130,14 +130,14 @@ public class EnumTest {
         settings.enumMemberCasing = IdentifierCasing.PascalCase;
         settings.jsonLibrary = JsonLibrary.jackson2;
         final ClassEnumExtension classEnumExtension = new ClassEnumExtension();
-        classEnumExtension.setConfiguration(Collections.singletonMap("classEnumPattern", "Enum"));
+        classEnumExtension.setConfiguration(Collections.singletonMap("classEnumPattern", "TestAnnotation"));
         settings.extensions.add(classEnumExtension);
         final String output = new TypeScriptGenerator(settings).generateTypeScript(Input.from(DummyEnum.class, DummyClassEnum.class, DummyMixedCaseEnum.class));
         final String expected = (
                 "\ndeclare const enum DummyClassEnum {\n" +
-                        "    Atype = 'ATYPE',\n" +
-                        "    Btype = 'BTYPE',\n" +
-                        "    Ctype = 'CTYPE',\n" +
+                        "    Atype = 'a-type',\n" +
+                        "    Btype = 'b-type',\n" +
+                        "    Ctype = 'c-type',\n" +
                         "}\n" +
                         "\ndeclare const enum DummyEnum {\n" +
                         "    Red = 'Red',\n" +
@@ -274,7 +274,7 @@ public class EnumTest {
 
     enum Direction {
         North,
-        East, 
+        East,
         South,
         West
     }

@@ -1,6 +1,8 @@
 
 package cz.habarta.typescript.generator.ext;
 
+import java.lang.annotation.Annotation;
+
 import cz.habarta.typescript.generator.Extension;
 import cz.habarta.typescript.generator.compiler.EnumKind;
 import cz.habarta.typescript.generator.compiler.EnumMemberModel;
@@ -22,11 +24,13 @@ public class ClassEnumExtension extends Extension {
 
     public static final String CFG_CLASS_ENUM_PATTERN = "classEnumPattern";
 
-    private String classEnumPattern = "ClassEnum";
+    private String classEnumPattern = "Enum";
 
     @Override
     public EmitterExtensionFeatures getFeatures() {
-        return new EmitterExtensionFeatures();
+        final EmitterExtensionFeatures features = new EmitterExtensionFeatures();
+        features.worksWithPackagesMappedToNamespaces = true;
+        return features;
     }
 
     @Override
@@ -44,7 +48,8 @@ public class ClassEnumExtension extends Extension {
                 List<TsBeanModel> beans = model.getBeans();
                 List<TsBeanModel> classEnums = new ArrayList<>();
                 for (TsBeanModel bean : beans) {
-                    if (bean.getName().getSimpleName().contains(classEnumPattern)) {
+                    Annotation[] annotations = bean.getOrigin().getDeclaredAnnotations();
+                    if (Arrays.stream(annotations).anyMatch(a -> a.annotationType().getName().contains(classEnumPattern))) {
                         classEnums.add(bean);
                     }
                 }
@@ -54,7 +59,11 @@ public class ClassEnumExtension extends Extension {
                     List<EnumMemberModel> members = new ArrayList<>();
                     for (Field declaredField : tsBeanModel.getOrigin().getDeclaredFields()) {
                         if (declaredField.getType().getName().equals(tsBeanModel.getOrigin().getName())) {
-                            members.add(new EnumMemberModel(declaredField.getName(), declaredField.getName(), declaredField, null));
+                            String value = declaredField.getName();
+                            try {
+                               value = declaredField.get(declaredField.getClass()).toString();
+                            } catch (IllegalAccessException ignored) { }
+                            members.add(new EnumMemberModel(declaredField.getName(), value, null, null));
                         }
                     }
                     TsEnumModel temp = new TsEnumModel(
