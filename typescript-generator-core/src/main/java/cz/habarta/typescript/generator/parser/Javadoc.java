@@ -104,7 +104,7 @@ public class Javadoc {
             final Field dField = findJavadocField(field.getName(), dFields);
             propertyComment = dField != null ? dField.getComment() : null;
             tags = dField != null ? dField.getTag() : null;
-        } 
+        }
         if (propertyComment == null )  {
             //give a chance for comments on fields but not on getter setters
             final Field dField = findJavadocField(property.getName(), dFields);
@@ -117,16 +117,30 @@ public class Javadoc {
 
     private EnumModel enrichEnum(EnumModel enumModel) {
         final Enum dEnum = findJavadocEnum(enumModel.getOrigin(), dRoots);
+        final Class cEnum = findJavadocClass(enumModel.getOrigin(), dRoots);
         final List<EnumMemberModel> enrichedMembers = new ArrayList<>();
         for (EnumMemberModel member : enumModel.getMembers()) {
-            final EnumMemberModel enrichedMember = enrichEnumMember(member, dEnum);
-            enrichedMembers.add(enrichedMember);
+            if (cEnum != null) {
+                final EnumMemberModel enrichedMember = enrichClassEnumMember(member, cEnum);
+                enrichedMembers.add(enrichedMember);
+            } else {
+                final EnumMemberModel enrichedMember = enrichEnumMember(member, dEnum);
+                enrichedMembers.add(enrichedMember);
+            }
         }
-        final String enumComment = dEnum != null ? dEnum.getComment() : null;
-        final List<TagInfo> tags = dEnum != null ? dEnum.getTag() : null;
+        final String enumComment = dEnum != null ? dEnum.getComment() : (cEnum != null ? cEnum.getComment() : null);
+        final List<TagInfo> tags = dEnum != null ? dEnum.getTag() : (cEnum != null ? cEnum.getTag() : null);
         return enumModel
                 .withMembers(enrichedMembers)
                 .withComments(combineComments(getComments(enumComment, tags), enumModel.getComments()));
+    }
+
+    private EnumMemberModel enrichClassEnumMember(EnumMemberModel enumMember, Class cEnum) {
+        final Field field = findJavadocField(enumMember.getPropertyName(), cEnum.getField());
+        final List<TagInfo> tags = field != null ? field.getTag(): null;
+        final String memberComment = field != null ? field.getComment() : null;
+        return enumMember
+                .withComments(combineComments(getComments(memberComment, tags), enumMember.getComments()));
     }
 
     private EnumMemberModel enrichEnumMember(EnumMemberModel enumMember, Enum dEnum) {
