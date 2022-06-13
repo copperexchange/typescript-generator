@@ -38,7 +38,7 @@ public abstract class ModelParser {
     private final Queue<SourceType<? extends Type>> typeQueue;
     private final TypeProcessor commonTypeProcessor;
     private final List<RestApplicationParser> restApplicationParsers;
-        
+
     public static abstract class Factory {
 
         public TypeProcessor getSpecificTypeProcessor() {
@@ -189,6 +189,24 @@ public abstract class ModelParser {
             }
             if (!settings.requiredAnnotations.isEmpty()) {
                 return !Utils.hasAnyAnnotation(propertyMember::getAnnotation, settings.requiredAnnotations);
+            }
+        }
+        return false;
+    }
+
+    protected boolean isPropertyOptional(PropertyMember propertyMember, java.lang.Class<?> sourceClass, String propertyName) {
+        if (settings.optionalProperties == OptionalProperties.all) {
+            return true;
+        }
+        if (settings.optionalProperties == null || settings.optionalProperties == OptionalProperties.useSpecifiedAnnotations) {
+            if (!settings.optionalAnnotations.isEmpty()) {
+                return Utils.hasAnyAnnotation(propertyMember::getAnnotation, settings.optionalAnnotations);
+            }
+            if (settings.primitivePropertiesRequired && Utils.isPrimitiveType(propertyMember.getType())) {
+                return false;
+            }
+            if (!settings.requiredAnnotations.isEmpty()) {
+                return !javadoc.checkIsRequired(sourceClass, propertyName, settings.requiredAnnotations) && !Utils.hasAnyAnnotation(propertyMember::getAnnotation, settings.requiredAnnotations);
             }
         }
         return false;

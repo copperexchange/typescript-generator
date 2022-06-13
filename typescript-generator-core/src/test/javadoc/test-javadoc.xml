@@ -3962,6 +3962,7 @@
             <constructor name="Person" signature="()" qualified="cz.habarta.typescript.generator.Person" scope="public" final="false" included="true" native="false" synchronized="false" static="false" varArgs="false"/>
             <field name="name" qualified="cz.habarta.typescript.generator.Person.name" scope="public" volatile="false" transient="false" static="false" final="false">
                 <type qualified="java.lang.String"/>
+                <annotation name="NonNull" qualified="lombok.NonNull"/>
             </field>
             <field name="age" qualified="cz.habarta.typescript.generator.Person.age" scope="public" volatile="false" transient="false" static="false" final="false">
                 <type qualified="int"/>

@@ -2,11 +2,8 @@
 package cz.habarta.typescript.generator;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import cz.habarta.typescript.generator.parser.BeanModel;
-import cz.habarta.typescript.generator.parser.EnumModel;
-import cz.habarta.typescript.generator.parser.Jackson2Parser;
-import cz.habarta.typescript.generator.parser.Model;
-import cz.habarta.typescript.generator.parser.PropertyModel;
+import cz.habarta.typescript.generator.parser.*;
+
 import java.io.File;
 import java.util.Arrays;
 import org.junit.jupiter.api.Assertions;
@@ -105,6 +102,24 @@ public class JavadocTest {
             Assertions.assertTrue(!generated.contains("</p>"));
             Assertions.assertTrue(generated.contains("Long\n * paragraph\n * \n * Second\n * paragraph"));
         }
+    }
+
+    @Test
+    public void testLombokAnnotations() {
+        final Settings settings = new Settings();
+        settings.javadocXmlFiles = Arrays.asList(new File("src/test/javadoc/test-javadoc.xml"));
+        settings.requiredAnnotations = Arrays.asList(lombok.NonNull.class);
+        final ModelParser parser = new Jackson2Parser(settings, new TypeProcessor.Chain(
+                new ExcludingTypeProcessor(settings.getExcludeFilter()),
+                new DefaultTypeProcessor()
+        ));
+        final Model model = parser.parseModel(Person.class);
+        Assertions.assertEquals(false, model.getBeans().get(0).getProperties().get(0).isOptional());
+        Assertions.assertEquals(true, model.getBeans().get(0).getProperties().get(1).isOptional());
+        Assertions.assertEquals(true, model.getBeans().get(0).getProperties().get(2).isOptional());
+        Assertions.assertEquals(true, model.getBeans().get(0).getProperties().get(3).isOptional());
+        Assertions.assertEquals(true, model.getBeans().get(0).getProperties().get(4).isOptional());
+
     }
 
     /**
@@ -207,10 +222,10 @@ public class JavadocTest {
 
     /**
      * First sentence.
-     * 
+     *
      * <p> Long
      * paragraph </p>
-     * 
+     *
      * <p>Second
      * paragraph</p>
      */

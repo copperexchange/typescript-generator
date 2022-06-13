@@ -6,20 +6,17 @@ import cz.habarta.typescript.generator.TypeScriptGenerator;
 import cz.habarta.typescript.generator.compiler.EnumMemberModel;
 import cz.habarta.typescript.generator.emitter.TsEnumModel;
 import cz.habarta.typescript.generator.util.Utils;
+import cz.habarta.typescript.generator.xmldoclet.*;
 import cz.habarta.typescript.generator.xmldoclet.Class;
 import cz.habarta.typescript.generator.xmldoclet.Enum;
-import cz.habarta.typescript.generator.xmldoclet.EnumConstant;
-import cz.habarta.typescript.generator.xmldoclet.Field;
-import cz.habarta.typescript.generator.xmldoclet.Interface;
-import cz.habarta.typescript.generator.xmldoclet.Method;
 import cz.habarta.typescript.generator.xmldoclet.Package;
-import cz.habarta.typescript.generator.xmldoclet.Root;
-import cz.habarta.typescript.generator.xmldoclet.TagInfo;
 import jakarta.xml.bind.JAXB;
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 public class Javadoc {
@@ -88,6 +85,19 @@ public class Javadoc {
         }
 
         return enumMember;
+    }
+
+    public Boolean checkIsRequired(java.lang.Class<?> cls, String propertyName, List<java.lang.Class<? extends Annotation>> requiredAnnotations) {
+        final Class dClass = findJavadocClass(cls, dRoots);
+
+        if (dClass != null) {
+            final Field dField = findJavadocField(propertyName, dClass.getField());
+            return dField.getAnnotation().stream()
+                    .map(AnnotationInstance::getQualified)
+                    .anyMatch(requiredAnnotations.stream().map(java.lang.Class::getName).collect(Collectors.toList())::contains);
+        }
+
+        return false;
     }
 
     private BeanModel enrichBean(BeanModel bean) {

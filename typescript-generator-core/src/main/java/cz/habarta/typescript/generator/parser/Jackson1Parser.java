@@ -91,7 +91,7 @@ public class Jackson1Parser extends ModelParser {
                 if (!isAnnotatedPropertyIncluded(beanPropertyWriter::getAnnotation, sourceClass.type.getName() + "." + beanPropertyWriter.getName())) {
                     continue;
                 }
-                final boolean optional = isPropertyOptional(propertyMember);
+                final boolean optional = isPropertyOptional(propertyMember, sourceClass.type, beanPropertyWriter.getName());
                 properties.add(processTypeAndCreateProperty(beanPropertyWriter.getName(), propertyType, null, optional, null, sourceClass.type, member, null, null));
             }
         }

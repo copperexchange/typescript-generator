@@ -96,7 +96,7 @@ public class GsonParser extends ModelParser {
                 }
                 final boolean optional = settings.optionalProperties == OptionalProperties.useLibraryDefinition
                         ? true
-                        : isPropertyOptional(new PropertyMember(field, field.getGenericType(), field.getAnnotatedType(), null));
+                        : isPropertyOptional(new PropertyMember(field, field.getGenericType(), field.getAnnotatedType(), null), sourceClass.type, name);
                 properties.add(new PropertyModel(name, field.getGenericType(), optional, null, field, null, null, null));
                 addBeanToQueue(new SourceType<>(field.getGenericType(), sourceClass.type, name));
             }

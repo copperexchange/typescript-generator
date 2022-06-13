@@ -108,11 +108,11 @@ public class Jackson2Parser extends ModelParser {
     }
 
     public static class JaxbParserFactory extends Jackson2ParserFactory {
-        
+
         public JaxbParserFactory() {
             super(true);
         }
-        
+
     }
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -280,7 +280,7 @@ public class Jackson2Parser extends ModelParser {
                 }
                 final boolean optional = settings.optionalProperties == OptionalProperties.useLibraryDefinition
                         ? !beanProperty.isRequired()
-                        : isPropertyOptional(propertyMember);
+                        : isPropertyOptional(propertyMember, sourceClass.type, beanProperty.getName());
                 // @JsonUnwrapped
                 PropertyModel.PullProperties pullProperties = null;
                 final JsonUnwrapped annotation = beanProperty.getAnnotation(JsonUnwrapped.class);
