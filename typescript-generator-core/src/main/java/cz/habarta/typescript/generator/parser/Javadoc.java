@@ -92,9 +92,9 @@ public class Javadoc {
 
         if (dClass != null) {
             final Field dField = findJavadocField(propertyName, dClass.getField());
-            return dField.getAnnotation().stream()
-                    .map(AnnotationInstance::getQualified)
-                    .anyMatch(requiredAnnotations.stream().map(java.lang.Class::getName).collect(Collectors.toList())::contains);
+            return dField != null && dField.getAnnotation().stream()
+                .map(AnnotationInstance::getQualified)
+                .anyMatch(requiredAnnotations.stream().map(java.lang.Class::getName).collect(Collectors.toList())::contains);
         }
 
         return false;
