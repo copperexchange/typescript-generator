@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.habarta.typescript.generator.ext.ClassEnumExtension;
+
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -107,6 +109,7 @@ public class EnumTest {
         final ClassEnumExtension classEnumExtension = new ClassEnumExtension();
         classEnumExtension.setConfiguration(Collections.singletonMap("classEnumPattern", "TestAnnotation"));
         settings.extensions.add(classEnumExtension);
+        settings.javadocXmlFiles = Arrays.asList(new File("src/test/javadoc/test-javadoc.xml"));
         final String output = new TypeScriptGenerator(settings).generateTypeScript(Input.from(DummyEnum.class, DummyClassEnum.class));
         final String expected = (
                 "\ndeclare const enum DummyClassEnum {\n" +
