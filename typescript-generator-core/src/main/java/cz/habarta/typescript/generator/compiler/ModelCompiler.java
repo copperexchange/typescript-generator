@@ -155,7 +155,9 @@ public class ModelCompiler {
 
         // enums
         tsModel = applyExtensionTransformers(symbolTable, model, tsModel, TransformationPhase.BeforeEnums, extensionTransformers);
-        tsModel = addEnumValuesToJavadoc(tsModel);
+        if (settings.mapEnum == null || settings.mapEnum == EnumMapping.asUnion || settings.mapEnum == EnumMapping.asInlineUnion) {
+            tsModel = addEnumValuesToJavadoc(tsModel);
+        }
         if (settings.enumMemberCasing != null && settings.enumMemberCasing != IdentifierCasing.keepOriginal) {
             tsModel = transformEnumMembersCase(tsModel);
         }

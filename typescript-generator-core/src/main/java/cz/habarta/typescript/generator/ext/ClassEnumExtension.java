@@ -1,29 +1,29 @@
 
 package cz.habarta.typescript.generator.ext;
 
+import java.io.File;
 import java.lang.annotation.Annotation;
 
 import cz.habarta.typescript.generator.Extension;
+import cz.habarta.typescript.generator.Settings;
 import cz.habarta.typescript.generator.compiler.EnumKind;
 import cz.habarta.typescript.generator.compiler.EnumMemberModel;
 import cz.habarta.typescript.generator.compiler.ModelCompiler;
 import cz.habarta.typescript.generator.compiler.ModelTransformer;
 import cz.habarta.typescript.generator.compiler.SymbolTable;
-import cz.habarta.typescript.generator.emitter.EmitterExtensionFeatures;
-import cz.habarta.typescript.generator.emitter.TsBeanModel;
-import cz.habarta.typescript.generator.emitter.TsEnumModel;
-import cz.habarta.typescript.generator.emitter.TsModel;
+import cz.habarta.typescript.generator.emitter.*;
+import cz.habarta.typescript.generator.parser.Javadoc;
+
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class ClassEnumExtension extends Extension {
 
     public static final String CFG_CLASS_ENUM_PATTERN = "classEnumPattern";
+    public static final String CFG_JAVADOC_FILE_PATH = "javadocFilePath";
 
+    private Javadoc javadoc;
     private String classEnumPattern = "Enum";
 
     @Override
@@ -37,6 +37,14 @@ public class ClassEnumExtension extends Extension {
     public void setConfiguration(Map<String, String> configuration) throws RuntimeException {
         if (configuration.containsKey(CFG_CLASS_ENUM_PATTERN)) {
             classEnumPattern = configuration.get(CFG_CLASS_ENUM_PATTERN);
+        }
+        if (configuration.containsKey(CFG_JAVADOC_FILE_PATH)) {
+            Settings settings = new Settings();
+            settings.javadocXmlFiles = Collections.singletonList(new File(configuration.get(CFG_JAVADOC_FILE_PATH)));
+            String newline = String.format("%n");
+            settings.newline = newline;
+
+            javadoc = new Javadoc(settings);
         }
     }
 
@@ -60,10 +68,14 @@ public class ClassEnumExtension extends Extension {
                     for (Field declaredField : tsBeanModel.getOrigin().getDeclaredFields()) {
                         if (declaredField.getType().getName().equals(tsBeanModel.getOrigin().getName())) {
                             String value = declaredField.getName();
+                            TsPropertyModel property = null;
                             try {
                                value = declaredField.get(declaredField.getClass()).toString();
+                               property = tsBeanModel.getProperties().stream()
+                                    .filter((p) -> p.getName().equals(declaredField.getName()))
+                                    .findFirst().orElse(null);
                             } catch (IllegalAccessException ignored) { }
-                            members.add(new EnumMemberModel(declaredField.getName(), value, null, null));
+                            members.add(new EnumMemberModel(declaredField.getName(), value, null, property != null ? property.getComments() : null));
                         }
                     }
                     TsEnumModel temp = new TsEnumModel(
@@ -71,10 +83,11 @@ public class ClassEnumExtension extends Extension {
                             tsBeanModel.getName(),
                             EnumKind.StringBased,
                             members,
-                            null,
+                            tsBeanModel.getComments(),
                             false
                     );
-                    stringEnums.add(temp);
+
+                    stringEnums.add(javadoc != null ? javadoc.enrichClassEnumModel(temp) : temp);
                 }
 
                 stringEnums.addAll(model.getEnums());

@@ -861,6 +861,7 @@
             </field>
         </class>
         <class name="DummyClassEnum" qualified="cz.habarta.typescript.generator.DummyClassEnum" scope="public" abstract="false" error="false" exception="false" externalizable="false" included="true" serializable="false">
+            <comment>This is dummy class</comment>
             <class qualified="java.lang.Object"/>
             <constructor name="DummyClassEnum" signature="(java.lang.String)" qualified="cz.habarta.typescript.generator.DummyClassEnum" scope="public" final="false" included="true" native="false" synchronized="false" static="false" varArgs="false">
                 <parameter name="value">
@@ -878,12 +879,15 @@
             </method>
             <field name="ATYPE" qualified="cz.habarta.typescript.generator.DummyClassEnum.ATYPE" scope="public" volatile="false" transient="false" static="true" final="true">
                 <type qualified="cz.habarta.typescript.generator.DummyClassEnum"/>
+                <comment>A type comment</comment>
             </field>
             <field name="BTYPE" qualified="cz.habarta.typescript.generator.DummyClassEnum.BTYPE" scope="public" volatile="false" transient="false" static="true" final="true">
                 <type qualified="cz.habarta.typescript.generator.DummyClassEnum"/>
+                <comment>B type comment</comment>
             </field>
             <field name="CTYPE" qualified="cz.habarta.typescript.generator.DummyClassEnum.CTYPE" scope="public" volatile="false" transient="false" static="true" final="true">
                 <type qualified="cz.habarta.typescript.generator.DummyClassEnum"/>
+                <comment>C type comment</comment>
             </field>
         </class>
         <class name="DuplicatePropertyTest" qualified="cz.habarta.typescript.generator.DuplicatePropertyTest" scope="public" abstract="false" error="false" exception="false" externalizable="false" included="true" serializable="false">
@@ -2046,10 +2050,10 @@
         </class>
         <class name="JavadocTest.ClassWithPElements" qualified="cz.habarta.typescript.generator.JavadocTest.ClassWithPElements" scope="public" abstract="false" error="false" exception="false" externalizable="false" included="true" serializable="false">
             <comment>First sentence.
- 
+
  &lt;p&gt; Long
  paragraph &lt;/p&gt;
- 
+
  &lt;p&gt;Second
  paragraph&lt;/p&gt;</comment>
             <class qualified="java.lang.Object"/>
