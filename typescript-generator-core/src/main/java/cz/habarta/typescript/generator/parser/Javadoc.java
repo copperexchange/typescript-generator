@@ -4,6 +4,7 @@ package cz.habarta.typescript.generator.parser;
 import cz.habarta.typescript.generator.Settings;
 import cz.habarta.typescript.generator.TypeScriptGenerator;
 import cz.habarta.typescript.generator.compiler.EnumMemberModel;
+import cz.habarta.typescript.generator.emitter.TsEnumModel;
 import cz.habarta.typescript.generator.util.Utils;
 import cz.habarta.typescript.generator.xmldoclet.Class;
 import cz.habarta.typescript.generator.xmldoclet.Enum;
@@ -63,6 +64,30 @@ public class Javadoc {
             dRestApplications.add(dRestApplication);
         }
         return new Model(dBeans, dEnums, dRestApplications);
+    }
+
+    public TsEnumModel enrichClassEnumModel(TsEnumModel model) {
+        final List<EnumMemberModel> dBeans = new ArrayList<>();
+        for (EnumMemberModel enumMember : model.getMembers()) {
+            final EnumMemberModel dBean = enrichClassEnumMember(model.getOrigin(), enumMember);
+            dBeans.add(dBean);
+        }
+        return model.withMembers(dBeans);
+    }
+
+    private EnumMemberModel enrichClassEnumMember(java.lang.Class<?> cls, EnumMemberModel enumMember) {
+        final Class dClass = findJavadocClass(cls, dRoots);
+
+        if (dClass != null) {
+            String propertyComment = null;
+            List<TagInfo> tags = null;
+
+            final Field dField = findJavadocField(enumMember.getPropertyName(), dClass.getField());
+            propertyComment = dField != null ? dField.getComment() : null;
+            return enumMember.withComments(combineComments(getComments(propertyComment, tags), enumMember.getComments()));
+        }
+
+        return enumMember;
     }
 
     private BeanModel enrichBean(BeanModel bean) {

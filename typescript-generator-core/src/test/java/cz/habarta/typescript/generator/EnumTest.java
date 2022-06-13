@@ -8,10 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cz.habarta.typescript.generator.ext.ClassEnumExtension;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
@@ -107,19 +105,47 @@ public class EnumTest {
         settings.mapEnum = EnumMapping.asEnum;
         settings.jsonLibrary = JsonLibrary.jackson2;
         final ClassEnumExtension classEnumExtension = new ClassEnumExtension();
-        classEnumExtension.setConfiguration(Collections.singletonMap("classEnumPattern", "TestAnnotation"));
+        Map<String, String> myMap = new HashMap<String, String>() {{
+            put("classEnumPattern", "TestAnnotation");
+            put("javadocFilePath", "src/test/javadoc/test-javadoc.xml");
+        }};
+        classEnumExtension.setConfiguration(myMap);
         settings.extensions.add(classEnumExtension);
         settings.javadocXmlFiles = Arrays.asList(new File("src/test/javadoc/test-javadoc.xml"));
         final String output = new TypeScriptGenerator(settings).generateTypeScript(Input.from(DummyEnum.class, DummyClassEnum.class));
         final String expected = (
+                "\n/**" +
+                "\n * This is dummy class" +
+                "\n */" +
                 "\ndeclare const enum DummyClassEnum {\n" +
+                        "    /**\n" +
+                        "     * A type comment\n" +
+                        "     */\n" +
                         "    ATYPE = 'a-type',\n" +
+                        "    /**\n" +
+                        "     * B type comment\n" +
+                        "     */\n" +
                         "    BTYPE = 'b-type',\n" +
+                        "    /**\n" +
+                        "     * C type comment\n" +
+                        "     */\n" +
                         "    CTYPE = 'c-type',\n" +
                         "}\n" +
+                "\n/**" +
+                "\n * Documentation for DummyEnum." +
+                "\n */" +
                 "\ndeclare const enum DummyEnum {\n" +
+                        "    /**\n" +
+                        "     * ff0000\n" +
+                        "     */\n" +
                         "    Red = 'Red',\n" +
+                        "    /**\n" +
+                        "     * 00ff00\n" +
+                        "     */\n" +
                         "    Green = 'Green',\n" +
+                        "    /**\n" +
+                        "     * 0000ff\n" +
+                        "     */\n" +
                         "    Blue = 'Blue',\n" +
                         "}\n"
                 ).replace("'", "\"");

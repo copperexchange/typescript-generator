@@ -861,6 +861,7 @@
             </field>
         </class>
         <class name="DummyClassEnum" qualified="cz.habarta.typescript.generator.DummyClassEnum" scope="public" abstract="false" error="false" exception="false" externalizable="false" included="true" serializable="false">
+            <comment>This is dummy class</comment>
             <class qualified="java.lang.Object"/>
             <constructor name="DummyClassEnum" signature="(java.lang.String)" qualified="cz.habarta.typescript.generator.DummyClassEnum" scope="public" final="false" included="true" native="false" synchronized="false" static="false" varArgs="false">
                 <parameter name="value">
