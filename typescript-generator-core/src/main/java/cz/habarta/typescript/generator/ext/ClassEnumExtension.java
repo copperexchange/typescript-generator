@@ -9,10 +9,8 @@ import cz.habarta.typescript.generator.compiler.EnumMemberModel;
 import cz.habarta.typescript.generator.compiler.ModelCompiler;
 import cz.habarta.typescript.generator.compiler.ModelTransformer;
 import cz.habarta.typescript.generator.compiler.SymbolTable;
-import cz.habarta.typescript.generator.emitter.EmitterExtensionFeatures;
-import cz.habarta.typescript.generator.emitter.TsBeanModel;
-import cz.habarta.typescript.generator.emitter.TsEnumModel;
-import cz.habarta.typescript.generator.emitter.TsModel;
+import cz.habarta.typescript.generator.emitter.*;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,10 +58,14 @@ public class ClassEnumExtension extends Extension {
                     for (Field declaredField : tsBeanModel.getOrigin().getDeclaredFields()) {
                         if (declaredField.getType().getName().equals(tsBeanModel.getOrigin().getName())) {
                             String value = declaredField.getName();
+                            TsPropertyModel property = null;
                             try {
                                value = declaredField.get(declaredField.getClass()).toString();
+                               property = tsBeanModel.getProperties().stream()
+                                    .filter((p) -> p.getName().equals(declaredField.getName()))
+                                    .findFirst().orElse(null);
                             } catch (IllegalAccessException ignored) { }
-                            members.add(new EnumMemberModel(declaredField.getName(), value, declaredField, tsBeanModel.getComments()));
+                            members.add(new EnumMemberModel(declaredField.getName(), value, declaredField, property != null ? property.getComments() : null));
                         }
                     }
                     TsEnumModel temp = new TsEnumModel(
