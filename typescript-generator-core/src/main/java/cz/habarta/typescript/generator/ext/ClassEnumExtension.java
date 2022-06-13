@@ -63,7 +63,7 @@ public class ClassEnumExtension extends Extension {
                             try {
                                value = declaredField.get(declaredField.getClass()).toString();
                             } catch (IllegalAccessException ignored) { }
-                            members.add(new EnumMemberModel(declaredField.getName(), value, null, null));
+                            members.add(new EnumMemberModel(declaredField.getName(), value, declaredField, tsBeanModel.getComments()));
                         }
                     }
                     TsEnumModel temp = new TsEnumModel(
