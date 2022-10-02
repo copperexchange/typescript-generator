@@ -28,7 +28,7 @@
         <dependency>
             <groupId>cz.habarta.typescript-generator</groupId>
             <artifactId>typescript-generator-core</artifactId>
-            <version>2.34-SNAPSHOT</version>
+            <version>3.0.1157</version>
         </dependency>
     </dependencies>
 
