@@ -115,7 +115,8 @@ public class Jackson2Parser extends ModelParser {
 
     }
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    // We are passing custom mapper naming strategy as otherwise we have differences on how it's handled on backend
+    private final ObjectMapper objectMapper = new ObjectMapper().setPropertyNamingStrategy(new Jackson2MapperNamingStrategy());
 
     public Jackson2Parser(Settings settings, TypeProcessor typeProcessor) {
         this(settings, typeProcessor, Collections.emptyList(), false);
